@@ -4,24 +4,38 @@ import Seo from "../components/Seo";
 import { graphql } from "gatsby";
 import { link } from "fs";
 
-export default function Blog({data}) {
+export default function Blog({ data }) {
   console.log(data);
   return (
     <Layout title="Blog">
-      <ul>
-        {data.allFile.nodes.map((file, index) => (
-          <li>{file.name}</li>
+      <section>
+        {data.allMdx.nodes.map((file, index) => (
+          <article key={index}>
+            <h3>{file.frontmatter?.title}</h3>
+            <h5>
+              {file.frontmatter?.author} in: {file.frontmatter?.category}
+            </h5>
+            <h6>{file.frontmatter?.date}</h6>
+            <hr />
+            <p>{file.excerpt}</p>
+          </article>
         ))}
-      </ul>
+      </section>
     </Layout>
   );
 }
 
 export const query = graphql`
-  query BlogTitles {
-    allFile {
+  query BlogPosts {
+    allMdx {
       nodes {
-        name
+        frontmatter {
+          author
+          category
+          date(formatString: "YYYY.MM.DD")
+          title
+        }
+        excerpt(pruneLength: 50)
       }
     }
   }
